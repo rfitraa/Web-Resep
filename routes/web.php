@@ -1,6 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\ResepController;
+use App\Models\Resep;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
-    return view('welcome');
+    if(Auth::id()){
+        $resep = Resep::select('*')->latest()->get();
+        return view('home', compact('resep'));
+    }else{
+        return view('auth.login');
+    }
 });
+
+Route::resource('/resep', ResepController::class)->middleware('auth');
